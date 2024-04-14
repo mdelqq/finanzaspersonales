@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<div id="session" class="container">
+  <div class="row">
+    {% load static %}
+    <div class="container-fluid text-center">
+      <img src="{% static 'mdelqq.png' %}" alt="MDELQ2" height="400">
+    </div>
+    <br>
+  </div>
+  {% if not user.is_authenticated %}
+  <div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-8">
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-sm-6 form-group">
+            <input class="form-control" type="text" name="{{ form.username.html_name }}" placeholder="Nombre de usuario" />
+          </div>
+          <div class="col-sm-6 form-group">
+            <input class="form-control" type="password" name="{{ form.password.html_name }}" placeholder="Contraseña" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 form-group">
+            <input type="submit" class="btn btn-default btn-lg pull-right" value="Iniciar sesión">
+            <input type="hidden" name="next" value="{{ next }}">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-8">
+      <p><a href="{% url 'password_reset' %}">¿Has olvidado la contraseña?</a></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-8">
+      <p>¿No tienes una cuenta? <a href="{% url 'signup' %}">Regístrate</a></p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
