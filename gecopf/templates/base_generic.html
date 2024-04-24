@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% block title %}<title>MDELQ2 - Mi dinero es lo que quiero</title>{% endblock %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <!-- Add additional CSS in static file -->
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body id="top">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="{% url 'index' %}">MDELQ2</a>
+        <span class="navbar-brand"> | </span>
+        {% if user.is_authenticated %}
+        <a class="navbar-brand" href="{% url 'home' %}">HOME</a>
+        <span class="navbar-brand"> | </span>
+        <a class="navbar-brand" href="{% url 'resumen' %}">ANÁLISIS</a>
+        <span class="navbar-brand"> | </span>
+        <span class="navbar-brand">Hola, {{ user.get_username }}</span>
+        {% else %}
+        <a class="navbar-brand" href="{% url 'login' %}">Iniciar sesión</a>
+        {% endif %}
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+          {% if home %}
+          {% if concept_names %}
+          <li><a href="#addTransaction" data-toggle="modal">AÑADIR TRANSACCIÓN</a></li>
+          {% endif %}
+          <li><a href="#addConcept" data-toggle="modal">AÑADIR CONCEPTO</a></li>
+          {% endif %}
+          {% if analisis %}
+          <li><a href="{% url 'resumen' %}" data-toggle="modal">RESUMEN</a></li>
+          <li><a href="{% url 'analisis' %}" data-toggle="modal">ANÁLISIS LINEAL</a></li>
+          <li><a href="{% url 'acumulado' %}" data-toggle="modal">ACUMULADO</a></li>
+          {% endif %}
+          <li class="dropdown">
+            <a class="dropdown-toggle navbar-brand glyphicon glyphicon-user" data-toggle="dropdown" href="#">
+              <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a class="" href="{% url 'profile' %}">Perfil de usuario</a></li>
+              <li><a class="" href="{% url 'password_change' %}">Cambiar contraseña</a></li>
+              {% if user.is_staff %}
+              <li><a class="" href="{% url 'admin:index' %}" target="_blank">Administrar sitio</a></li>
+              {% endif %}
+              <li class="text-center">
+                <form action="{% url 'logout' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ next }}">
+                  <button type="submit" class="btn btn navbar-btn">Cerrar sesión</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12 ">
+
+        {% if not index %}
+        <br><br><br><br>
+        {% if messages or form.errors %}
+        <script>
+          // Desaparecer después de 5 segundos
+          setTimeout(function () {
+            $('#success-message').fadeOut('slow');
+          }, 5000);
+        </script>
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+              <div class="alert {% if 'success' in message.tags %}alert-success{% elif 'error' in message.tags %}alert-danger{% endif %} alert-dismissible d-flex justify-content-between align-items-center" role="alert" id="success-message">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if form.errors %}
+        <div class="messages">
+          <div class="alert alert-danger" role="alert" id="success-message">
+            {% for field in form %}
+            {% for error in field.errors %}
+            {{ field.label }}: {{ error }}<br>
+            {% endfor %}
+            {% endfor %}
+
+            {% for error in form.non_field_errors %}
+            {{ error }}
+            {% endfor %}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+          </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer --><br><br>
+  <footer class="text-center">
+    <a class="up-arrow" href="#top" data-toggle="tooltip" title="Subir">
+      <span class="glyphicon glyphicon-chevron-up"></span>
+    </a><br><br>
+    <p>MDELQ2 - Mi dinero es lo que quiero</p>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal fade" id="addTransaction" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Nueva transacción</h4>
+        </div>
+        <!-- Contenido del formulario -->
+        <form id="transactionForm" method="post" action="{% url 'home' %}" class="needs-validation" novalidate>
+          <div class="modal-body">
+            {% csrf_token %}
+            <!--{{ form.as_p }}-->
+            <input type="hidden" name="action" id="newAction" value="newTransaction">
+            <div class="form-group popup">
+              <label for="id_nombre">Nombre</label>
+              {{ form.nombre }}
+              {% if form.nombre.errors %}
+              <div class="invalid-feedback">
+                {{ form.nombre.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="form-group popup">
+              <label for="id_concepto">Concepto</label>
+              {{ form.concepto }}
+              {% if form.concepto.errors %}
+              <div class="invalid-feedback">
+                {{ form.concepto.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="form-group popup">
+              <label for="id_cantidad">Cantidad</label>
+              {{ form.cantidad }}
+              {% if form.cantidad.errors %}
+              <div class="invalid-feedback">
+                {{ form.cantidad.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary popup">Añadir transacción</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="addConcept" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Nuevo concepto</h4>
+        </div>
+        <!-- Contenido del formulario -->
+        <form id="conceptForm" method="post" action="{% url 'home' %}" class="needs-validation" novalidate>
+          <div class="modal-body">
+            {% csrf_token %}
+            <input type="hidden" name="action" id="newAction" value="newConcept">
+            <div class="form-group popup">
+              <label for="id_nombre">Nombre</label>
+              {{ formCon.nombre }}
+              {% if formCon.nombre.errors %}
+              <div class="invalid-feedback">
+                {{ formCon.nombre.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="form-group popup">
+              <label for="id_detalle">Detalle</label>
+              {{ formCon.detalle }}
+              {% if formCon.detalle.errors %}
+              <div class="invalid-feedback">
+                {{ formCon.detalle.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="form-group popup">
+              <label for="id_tipo">Tipo</label>
+              {{ formCon.tipo }}
+              {% if formCon.tipo.errors %}
+              <div class="invalid-feedback">
+                {{ formCon.tipo.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Añadir concepto</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
