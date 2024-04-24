@@ -1,0 +1,189 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<!-- {% if perms.catalog.can_mark_returned %}
+{% endif %} -->
+
+{% load custom_filters %}
+
+{% load static %}
+<script src="{% static 'js/editTransaction.js' %}"></script>
+
+{% if concept_names %}
+<div class="container mt-5">
+    <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar"></div>
+    <table class="table table-bordered table-striped table-hover table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th colspan="5"></th>
+                {% for concept_name in concept_names %}
+                <th>{{ concept_name }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>Herramientas</th>
+                <th>Año</th>
+                <th>Mes</th>
+                <th>Día</th>
+                <th>Transacciones</th>
+                {% for concept_name in concept_names %}
+                <th>{{ totals|get_item:concept_name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in transaction_data %}
+            <tr>
+                <td>
+                    <div class="button-group">
+                        <span>#{{ row.id }}</span>
+                        <!-- Formulario de edición -->
+                        <button type="button" class="btn btn-link btn-edit" data-transaction-id="{{ row.id }}"
+                            data-transaction-name="{{ row.nombre }}" data-transaction-concept="{{ row.concepto }}"
+                            data-transaction-amount="{{ row.cantidad }}" data-toggle="modal"
+                            data-target="#editTransactionModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path
+                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fill-rule="evenodd"
+                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                            </svg>
+                        </button>
+                        <!-- Formulario de eliminación -->
+                        <form action="{% url 'home' %}" method="post"
+                            onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta transacción?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" id="deleteAction" value="delete">
+                            <input type="hidden" name="transaction_id" id="deleteTransactionId" value="{{ row.id }}">
+                            <input type="hidden" name="transaction_id" value="{{ row.id }}">
+                            <button type="submit" class="btn btn-link btn-delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path
+                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                    <path
+                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+                <td>{{ row.fecha|date:"Y" }}</td>
+                <td>{{ row.fecha|date:"F" }}</td>
+                <td>{{ row.fecha|date:"d" }}</td>
+                <td>{{ row.nombre }}</td>
+                {% for concept_name in concept_names %}
+                <td>{{ row.conceptos|get_item:concept_name }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="font-weight-bold">
+            <tr>
+                <th colspan="5"></th>
+                {% for concept_name in concept_names %}
+                <th>{{ totals|get_item:concept_name }}</th>
+                {% endfor %}
+            </tr>
+            <!--<tr>
+            <th colspan="6">Total General</th>
+            <th colspan="{{ concept_names|length }}">{{ total_general }}</th>
+        </tr>-->
+        </tfoot>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-warning"><p>No hay datos que mostrar. Comienza añadiendo un concepto.</p></div>
+{% endif %}
+
+<!-- Modal para editar transacción -->
+<div class="modal fade" id="editTransactionModal" tabindex="-1" role="dialog"
+    aria-labelledby="editTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTransactionModalLabel">Editar transacción</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="transactionForm" action="{% url 'home' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="action" id="newAction" value="edit">
+                    <input type="hidden" name="transaction_id" id="editTransactionId">
+                    <div class="form-group popup">
+                        <label for="editTransactionName">Nombre</label>
+                        <input type="text" class="form-control" id="editTransactionName" name="transaction_name">
+                    </div>
+                    <div class="form-group popup">
+                        <label for="editTransactionConcept">Concepto</label>
+                        <input type="text" class="form-control" id="editTransactionConcept" name="transaction_concept"
+                            disabled>
+                    </div>
+                    <div class="form-group popup">
+                        <label for="editTransactionAmount">Cantidad</label>
+                        <input type="number" class="form-control" id="editTransactionAmount" name="transaction_amount" step="0.01">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Actualizar transacción</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="last-column">
+    <!-- Contenido de la última columna -->
+</div>
+</div>
+
+  <!-- Modal para mostrar el consejo -->
+  <div id="consejoModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Contenido del modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="categoria-consejo"></h4>
+            </div>
+            <div class="modal-body">
+                <p><span id="contenido-consejo"></span></p> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para mostrar el modal automáticamente cuando se cargue la página -->
+<script>
+    $(document).ready(function(){
+            function mostrarConsejo() {
+                // Hacer la solicitud para obtener el consejo
+                $.ajax({
+                    url: "{% url 'seleccionar_consejo_aleatorio' %}",
+                    success: function(data) {
+                        $('#categoria-consejo').text(data.categoria);
+                        $('#contenido-consejo').text(data.consejo);
+                        $('#consejoModal').modal('show');
+                    }
+                });
+            }
+
+            // Llamar a la función para mostrar el consejo cada 2 minutos
+            setInterval(mostrarConsejo, 120000); // 120000 milisegundos = 2 minutos
+        });
+</script>
+
+{% else %}
+{% endif %}
+
+{% endblock %}
