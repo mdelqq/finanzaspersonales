@@ -1,0 +1,127 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+{% load static %}
+
+{% if user.is_authenticated %}
+
+<div id="session" class="container profile-container">
+  <div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-8">
+      {% if user.is_authenticated %}
+      {% else %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-8 text-center">
+      <div>
+        {% if user.imagen_de_perfil %}
+        <img src="{{ user.imagen_de_perfil.url }}" alt="Imagen de perfil de {{ user.username }}"
+          class="img-circle profile-image" style="max-height: 200px;">
+        {% else %}
+        {% if user.genero == 'M' %}
+        <img src="{% static 'default_male.png' %}" alt="Imagen de perfil por defecto masculino"
+          class="img-circle profile-image" style="max-height: 200px;">
+        {% elif user.genero == 'F' %}
+        <img src="{% static 'default_female.png' %}" alt="Imagen de perfil por defecto femenino"
+          class="img-circle profile-image" style="max-height: 200px;">
+        {% else %}
+        <img src="{% static 'default_nonbinary.png' %}" alt="Imagen de perfil por defecto no binario"
+          class="img-circle profile-image" style="max-height: 200px;">
+        {% endif %}
+        {% endif %}
+      </div>
+      <form method="post" enctype="multipart/form-data" action="{% url 'profile' %}">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            <input class="form-control" type="text" id="{{ form.username.id_for_label }}"
+              name="{{ form.username.html_name }}" value="{{ user.username|default_if_none:'' }}" />
+          </div>
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            <input class="form-control" type="text" id="{{ form.email.id_for_label }}" name="{{ form.email.html_name }}"
+              value="{{ user.email|default_if_none:'' }}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.numero_de_telefono.id_for_label }}">{{ form.numero_de_telefono.label }}</label>
+            <input class="form-control" type="text" pattern="[0-9]*" id="{{ form.numero_de_telefono.id_for_label }}"
+              name="{{ form.numero_de_telefono.html_name }}" value="{{ user.numero_de_telefono|default_if_none:'' }}" />
+          </div>
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.direccion.id_for_label }}">{{ form.direccion.label }}</label>
+            <input class="form-control" type="text" id="{{ form.direccion.id_for_label }}"
+              name="{{ form.direccion.html_name }}" value="{{ user.direccion|default_if_none:'' }}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.fecha_de_nacimiento.id_for_label }}">{{ form.fecha_de_nacimiento.label }}</label>
+            <input class="form-control" type="date" id="{{ form.fecha_de_nacimiento.id_for_label }}"
+              name="{{ form.fecha_de_nacimiento.html_name }}" value="{{ user.fecha_de_nacimiento|date:'Y-m-d' }}" />
+          </div>
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.genero.id_for_label }}">{{ form.genero.label }}</label>
+            <select class="form-control" id="{{ form.genero.id_for_label }}" name="{{ form.genero.html_name }}">
+              {% for value, label in form.genero.field.choices %}
+              <option value="{{ value }}"{% if form.genero.value == value %} selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            {% for error in form.genero.errors %}
+            <span class="help-block text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.imagen_de_perfil.id_for_label }}">{{ form.imagen_de_perfil.label }}</label>
+            <input class="form-control" type="file" id="{{ form.imagen_de_perfil.id_for_label }}"
+              name="{{ form.imagen_de_perfil.html_name }}" placeholder="{{ user.imagen_de_perfil }}" />
+          </div>
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.categorias_preferidas.id_for_label }}">Categorías preferidas:</label><br>
+            {{ form.categorias_preferidas }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 form-group">
+            <label for="{{ form.remove_image.id_for_label }}">{{ form.remove_image.label }}</label><br>Selecciona para eliminar 
+            <input type="checkbox" id="{{ form.remove_image.id_for_label }}" name="{{ form.remove_image.html_name }}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 form-group">
+            <input type="submit" class="btn btn-default btn-lg pull-right" value="Editar perfil">
+            <input type="hidden" name="next" value="{{ next }}">
+          </div>
+        </div>
+    </div>
+    </form>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-8">
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-8">
+  </div>
+</div>
+</div>
+
+{% endif %}
+
+{% endblock %}
