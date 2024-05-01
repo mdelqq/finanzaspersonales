@@ -1,0 +1,109 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<div id="session" class="container">
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">Registro de usuario</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% load static %}
+                                <img src="{% static 'mdelqq.png' %}" alt="MDELQ2" height="450">
+                            </div>
+                            <div class="col-md-6">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                                        <input class="form-control" type="text" id="{{ form.username.id_for_label }}"
+                                            name="{{ form.username.html_name }}"
+                                            value="{{ form.username.value|default_if_none:'' }}" placeholder="ejemplo" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                                        <input class="form-control" type="email" id="{{ form.email.id_for_label }}"
+                                            name="{{ form.email.html_name }}"
+                                            value="{{ form.email.value|default_if_none:'' }}" placeholder="ejemplo@midineroesloquequiero.com" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+                                        <input class="form-control" type="password"
+                                            id="{{ form.password1.id_for_label }}"
+                                            name="{{ form.password1.html_name }}" placeholder="************" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+                                        <input class="form-control" type="password"
+                                            id="{{ form.password2.id_for_label }}"
+                                            name="{{ form.password2.html_name }}" placeholder="************" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.numero_de_telefono.id_for_label }}">Número de teléfono</label>
+                                        <input class="form-control" type="text" pattern="[0-9]*"
+                                            id="{{ form.numero_de_telefono.id_for_label }}"
+                                            name="{{ form.numero_de_telefono.html_name }}"
+                                            value="{{ form.numero_de_telefono.value|default_if_none:'' }}" placeholder="666666666" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.direccion.id_for_label }}">Dirección</label>
+                                        <input class="form-control" type="text" id="{{ form.direccion.id_for_label }}"
+                                            name="{{ form.direccion.html_name }}"
+                                            value="{{ form.direccion.value|default_if_none:'' }}" placeholder="Calle Ejemplo, 27" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.fecha_de_nacimiento.id_for_label }}">{{ form.fecha_de_nacimiento.label }}</label>
+                                        <input class="form-control" type="date" id="{{ form.fecha_de_nacimiento.id_for_label }}"
+                                            name="{{ form.fecha_de_nacimiento.html_name }}"
+                                            value="{{ form.fecha_de_nacimiento.value|default_if_none:'' }}" placeholder="Fecha de nacimiento" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.genero.id_for_label }}">Género</label>
+                                        <select class="form-control" id="{{ form.genero.id_for_label }}" name="{{ form.genero.html_name }}">
+                                            {% for value, label in form.genero.field.choices %}
+                                                <option value="{{ value }}"{% if form.genero.value == value %} selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.imagen_de_perfil.id_for_label }}">{{ form.imagen_de_perfil.label }}</label>
+                                        <input class="form-control" type="file"
+                                            id="{{ form.imagen_de_perfil.id_for_label }}"
+                                            name="{{ form.imagen_de_perfil.html_name }}" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.categorias_preferidas.id_for_label }}">Categorías preferidas:</label><br>
+                                        {{ form.categorias_preferidas }}
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <p>¿Tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
