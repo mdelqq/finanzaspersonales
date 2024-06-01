@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div id="session" class="container profile-container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            {% if mensaje %}
+                <div class="alert alert-warning">{{ mensaje }}</div>
+            {% endif %}
+            {% for tipo_concepto, regresion in regresiones.items %}
+            {% if forloop.counter|divisibleby:"2" %}
+            <div class="row">
+                {% endif %}
+                <div class="col-md-3">
+                    <h2>{{ tipo_concepto }}</h2>
+                    <p><span data-toggle="tooltip" data-placement="top" title="La pendiente indica si el gasto o ingreso está aumentando o disminuyendo con el tiempo.">
+                        Pendiente de la regresión: {{ regresion.pendiente }}</span>
+                    </p>
+                    <p><span data-toggle="tooltip" data-placement="top" title="La intersección con el eje vertical indica el valor esperado de gasto o ingreso cuando el tiempo es cero.">
+                        Intercepto de la regresión: {{ regresion.intercepto }}</span>
+                    </p>
+                    <p><span data-toggle="tooltip" data-placement="top" title="Se trata de una estimación del gasto o ingreso para el próximo mes basada en la tendencia observada.">
+                        Previsión para el próximo mes: {{ regresion.prevision }}</span>
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <!--<img src="/media/regresion_{{ tipo_concepto }}.png" alt="Gráfica de regresión para {{ tipo_concepto }}">-->
+                    <img src="data:image/png;base64,{{ regresion.grafica_base64 }}"
+                        alt="Gráfica de regresión para {{ tipo_concepto }}" style="max-height: 300px;">
+                </div>
+                {% if forloop.counter|divisibleby:"2" or forloop.last %}
+            </div><br>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% else %}
+
+{% endif %}
+
+{% endblock %}
