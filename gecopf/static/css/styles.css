@@ -1,0 +1,233 @@
+.navbar {
+  font-family: Montserrat, sans-serif;
+  margin-bottom: 0;
+  background-color: #f0f0f1;
+  border: 0;
+  font-size: 11px !important;
+  letter-spacing: 3px;
+  opacity: 0.9;
+}
+
+footer {
+  background-color: #f0f0f1;
+  color: #000000;
+  padding: 32px;
+}
+
+footer a {
+  color: #000000;
+}
+
+footer a:hover {
+  color: #777;
+  text-decoration: none;
+}
+
+tbody span {
+  color: #4293ea;
+  padding-top: 5px;
+}
+
+.table thead th {
+  vertical-align: middle;
+  text-align: left;
+}
+
+.table tfoot th {
+  background-color: #f8f9fa;
+}
+
+.form-group.popup {
+  margin-bottom: 20px;
+}
+
+.form-group.popup label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group.popup input,
+.form-group.popup select {
+  width: calc(100%);
+  /* Calcula el ancho total menos el espacio del borde y el relleno */
+  min-height: 40px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  /* Asegura que el ancho total incluya el borde y el relleno */
+}
+
+.form-group.popup input:focus,
+.form-group.popup select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.btn-primary {
+  background-color: #0097b2;
+  border-color: #4293ea;
+  min-width: calc(50%);
+}
+
+.btn-primary:hover {
+  /*background-color: #0056b3;4293ea*/
+  background-color: #00778c;
+  border-color: #0056b3;
+}
+
+/* Estilos para el botón de eliminar con icono de papelera */
+.btn-delete.popup {
+  background-color: transparent;
+  border: none;
+  color: #dc3545;
+  /* Color rojo */
+}
+
+.btn-delete.popup:hover {
+  color: #bb2d3b;
+  /* Cambiar el color al pasar el mouse sobre el botón */
+}
+
+.button-group {
+  display: flex;
+  /* Utilizamos flexbox para organizar los elementos horizontalmente */
+  gap: 5px;
+  /* Espacio entre los botones */
+}
+
+.button-group button {
+  flex: 1;
+  /* Hace que los botones ocupen el mismo espacio horizontalmente */
+}
+
+.table-wrapper-scroll-y {
+  display: block;
+  max-height: 500px;
+  /* Ajusta esto según tus necesidades */
+  overflow-y: auto;
+}
+
+.table-wrapper-scroll-y th {
+  position: -webkit-sticky;
+  /* Para navegadores basados en WebKit */
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 1;
+  /* Asegúrate de que la cabecera esté encima del contenido */
+}
+
+.text-right .btn-primary {
+  margin-right: 22px;
+}
+
+
+.container {
+  width: 100%;
+  /* Ocupa todo el ancho de la pantalla */
+  height: 618px; /* Alto fijo */
+  overflow-x: auto;
+}
+
+.carousel {
+  width: 100%;
+  /* Ocupa todo el ancho del contenedor */
+  /*height: 100%; /* Ocupa todo el alto del contenedor */
+}
+
+.item img {
+  width: auto;
+  /* Ancho deseado */
+  /*height: 620px; /* Alto deseado */
+  object-fit: fill;
+  /* Llena el contenedor distorsionando la imagen */
+}
+
+/* Estilos adicionales para el carrusel si lo deseas */
+.carousel-caption {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.5);
+  /* Fondo semi-transparente */
+  padding: 20px;
+}
+
+.carousel-caption h3 {
+  color: #fff;
+  /* Color del texto */
+}
+
+.inicio {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image {
+  margin-bottom: 20px;
+  width: 200px;
+  height: 200px;
+}
+
+.profile-form {
+  margin-top: 20px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-group input {
+  margin-bottom: 10px;
+}
+
+.btn-custom {
+  background-color: #5cb85c;
+  color: white;
+}
+
+.btn-custom:hover {
+  background-color: #4cae4c;
+}
+
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert .close {
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.alert-fixed {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+  /* Para que esté por encima de otros elementos */
+  width: auto;
+  /* Ajusta el ancho según necesites */
+}
+
+.alert-fixed .close {
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
