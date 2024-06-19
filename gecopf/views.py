@@ -53,7 +53,7 @@ def home(request):
 
     # Calcular total general
     total_general = sum(totals.values())
-    
+
     context = {
         'home': True,
         'transaction_data': transaction_data,

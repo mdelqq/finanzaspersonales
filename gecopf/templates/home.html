@@ -163,6 +163,28 @@
     </div>
 </div>
 
+<div class="modal fade" id="avisoModal" tabindex="-1" role="dialog" aria-labelledby="avisoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="avisoModalLabel">Aviso Importante</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del aviso se llenará dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="avisos-data" type="application/json">
+    {{ avisos|json_script:"avisos-data" }}
+</script>
 <!-- Script para mostrar el modal automáticamente cuando se cargue la página -->
 <script>
     $(document).ready(function(){
@@ -178,8 +200,7 @@
                 });
             }
 
-            // Llamar a la función para mostrar el consejo cada 2 minutos
-            setInterval(mostrarConsejo, 120000); // 120000 milisegundos = 2 minutos
+            setInterval(mostrarConsejo, 60000); // 120000 milisegundos = 1 minuto
 
             function obtenerAvisos() {
                 $.ajax({
@@ -200,7 +221,6 @@
 
             setInterval(obtenerAvisos, 6000); // 60000 milisegundos = 1 minuto 
         });
-        
 </script>
 
 {% else %}
