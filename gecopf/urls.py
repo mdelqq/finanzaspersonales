@@ -13,4 +13,5 @@ urlpatterns = [
     path('acumulado/', views.analisis_datos_acum, name='acumulado'),
     path('resumen/', views.resumen_datos, name='resumen'),
     path('seleccionar_consejo_aleatorio/', views.seleccionar_consejo_aleatorio, name='seleccionar_consejo_aleatorio'),
+    path('verificar_tendencias/', views.verificar_tendencias, name='verificar_tendencias'),
 ]

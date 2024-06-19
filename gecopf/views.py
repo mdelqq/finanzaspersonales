@@ -498,3 +498,47 @@ def seleccionar_consejo_aleatorio(request):
         consejo = 'No hay consejos disponibles en este momento.'
     return JsonResponse({'categoria': categoria, 'consejo': consejo})
 
+def detectar_incremento_ingresos(usuario, porcentaje=20):
+    hoy = timezone.now()
+    hace_un_mes = hoy - timedelta(days=30)
+    
+    ingresos_ultimo_mes = Transaction.objects.filter(
+        user=usuario, concepto__tipo='Ingreso', fecha__range=[hace_un_mes, hoy]
+    ).aggregate(total=Sum('cantidad'))['total'] or 0
+    
+    ingresos_mes_anterior = Transaction.objects.filter(
+        user=usuario, concepto__tipo='Ingreso', fecha__range=[hace_un_mes - timedelta(days=30), hace_un_mes]
+    ).aggregate(total=Sum('cantidad'))['total'] or 0
+
+    if ingresos_mes_anterior > 0:
+        incremento = ((ingresos_ultimo_mes - ingresos_mes_anterior) / ingresos_mes_anterior) * 100
+        if incremento >= porcentaje:
+            return True, incremento
+    return False, 0
+
+def detectar_gastos_excesivos(usuario, umbral=1000):
+    hoy = timezone.now()
+    hace_un_mes = hoy - timedelta(days=30)
+    
+    gastos_ultimo_mes = Transaction.objects.filter(
+        user=usuario, concepto__tipo='Gasto', fecha__range=[hace_un_mes, hoy]
+    ).aggregate(total=Sum('cantidad'))['total'] or 0
+    
+    if gastos_ultimo_mes > umbral:
+        return True, gastos_ultimo_mes
+    return False, 0
+
+@login_required
+def verificar_tendencias(request):
+    usuario = request.user
+    avisos = []
+    
+    incremento_ingresos, porcentaje = detectar_incremento_ingresos(usuario)
+    if incremento_ingresos:
+        avisos.append(f"¡Tus ingresos han aumentado un {porcentaje}% en el último mes!")
+
+    gastos_excesivos, total_gastos = detectar_gastos_excesivos(usuario)
+    if gastos_excesivos:
+        avisos.append(f"¡Has gastado más de {total_gastos}€ en el último mes!")
+
+    return JsonResponse({'avisos': avisos})

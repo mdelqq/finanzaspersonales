@@ -180,7 +180,27 @@
 
             // Llamar a la función para mostrar el consejo cada 2 minutos
             setInterval(mostrarConsejo, 120000); // 120000 milisegundos = 2 minutos
+
+            function obtenerAvisos() {
+                $.ajax({
+                    url: "{% url 'verificar_tendencias' %}",
+                    success: function(data) {
+                        if (data && data.avisos && data.avisos.length > 0) {
+                            data.avisos.forEach(function(aviso) {
+                                $('#avisoModal .modal-body').text(aviso);
+                                $('#avisoModal').modal('show');
+                            });
+                        }
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error('Error al obtener los avisos:', errorThrown);
+                    }
+                });
+            }
+
+            setInterval(obtenerAvisos, 6000); // 60000 milisegundos = 1 minuto 
         });
+        
 </script>
 
 {% else %}
